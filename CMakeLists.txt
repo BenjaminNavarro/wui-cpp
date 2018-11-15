@@ -14,6 +14,11 @@ declare_PID_Package(
 
 set_PID_Package_Version(0 1 0)
 
-#now finding packages
+check_PID_Platform(CONFIGURATION posix)
+
+declare_PID_Package_Dependency(PACKAGE pid-rpath NATIVE VERSION 2.0)
+declare_PID_Package_Dependency(PACKAGE pid-os-utilities NATIVE VERSION 2.0)
+declare_PID_Package_Dependency(PACKAGE simple-web-server EXTERNAL VERSION 3.0)
+declare_PID_Package_Dependency(PACKAGE json EXTERNAL VERSION 3.4)
 
 build_PID_Package()

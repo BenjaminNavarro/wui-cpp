@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+
+<head>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta charset="utf-8">
+    <title>WebUI-CPP</title>
+
+    <script type="text/javascript" src="scripts/jquery-1.11.1.min.js"></script>
+    <script type="text/javascript" src="scripts/require.js"></script>
+
+    <script type="text/javascript" src="jqwidgets/jqxcore.js"></script>
+    <script type="text/javascript" src="jqwidgets/jqx-all.js"></script>
+
+    <link rel="stylesheet" href="jqwidgets/styles/jqx.base.css" type="text/css" />
+    <link rel="stylesheet" href="jqwidgets/styles/jqx.bootstrap.css" type="text/css" />
+</head>
+
+<body>
+    <div id="wui-controls" style="display: flex;">
+        <input type="text" id="server-ip" value="localhost"/>
+        <input type="button" value="Start" id='start-btn' style="margin: 10px;"/>
+        <input type="button" value="Stop" id='stop-btn' style="margin: 10px;"/>
+        <div id='refresh-rate' style='margin: 10px;'></div>
+    </div>
+    <div id="wui-container" style="max-width: 1000px;">
+    </div>
+
+    <!-- <div style="display: flex;">
+        <input type="button" value="Update" id='myButton' style="margin: 50px;"/>
+        <div id='jqxProgressBar' style="margin: 50px;"></div>
+    </div>
+    <div id='jqxslider'></div>
+    <div id='chartContainer' style="width:600px; height:400px"></div>
+    <input type="button" value="Start" id='startChart' style="margin: 50px;"/>
+    <input type="button" value="Stop" id='stopChart' style="margin: 50px;"/> -->
+
+    <script type="text/javascript">
+        $(document).ready(function() {
+            requirejs.config({
+                baseUrl: "/scripts",
+            });
+            var moduleName = 'wuicpp';
+            require([moduleName], function(loaded) {
+                let wui = loaded.wuicpp;
+                let app = new wui.Application();
+            });
+
+
+
+
+            // let data = [{
+            //     name: 'value 1',
+            //     value: '42'
+            // }, {
+            //     name: 'value 2',
+            //     value: '12'
+            // }];
+            // var source = {
+            //     datatype: "json",
+            //     datafields: [{
+            //             name: 'name'
+            //         },
+            //         {
+            //             name: 'value'
+            //         }
+            //     ],
+            //     localdata: data
+            // };
+            // var dataAdapter = new $.jqx.dataAdapter(source);
+            // $("#wui-table-values").jqxGrid({
+            //     width: '100%',
+            //     columnsresize: true,
+            //     columns: [{
+            //             text: 'Name',
+            //             datafield: 'name',
+            //             width: '50%'
+            //         },
+            //         {
+            //             text: 'Value',
+            //             datafield: 'value',
+            //             width: '50%'
+            //         }
+            //     ]
+            // });
+            //
+            // data.push({
+            //     name: 'value 3',
+            //     value: '3.14'
+            // });
+            // $("#wui-table-values").jqxGrid({
+            //     source: dataAdapter
+            // });
+            // data[0].value = 410;
+            // $("#wui-table-values").jqxGrid({
+            //     source: dataAdapter
+            // });
+            // console.log(data);
+        });
+    </script>
+
+</body>
+
+</html>

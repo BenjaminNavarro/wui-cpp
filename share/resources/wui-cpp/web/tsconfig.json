@@ -1,0 +1,14 @@
+{
+	"compilerOptions": {
+		"target": "es2017",
+		"module": "amd",
+		"sourceMap": false,
+		"outFile": "scripts/wuicpp.js",
+		"moduleResolution": "node"
+	},
+	"compileOnSave": true,
+	"buildOnSave": true,
+	"include": [
+		"lib/*"
+	]
+}
