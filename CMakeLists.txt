@@ -5,19 +5,18 @@ include(Package_Definition NO_POLICY_SCOPE)
 
 PROJECT(wui-cpp)
 
-declare_Package(
-			"Benjamin Navarro"
-			LIRMM
-			navarro@lirmm.fr
-			2018
-			GNULGPL
-			git@github.com:BenjaminNavarro/wui-cpp.git
-            https://github.com/BenjaminNavarro/wui-cpp.git
-			"An easy to use Web-based GUI for your C++ programs"
-			instructions.md
+declare_PID_Package(
+			AUTHOR 			"Benjamin Navarro"
+			INSTITUTION		LIRMM
+			MAIL			navarro@lirmm.fr
+			YEAR			2018
+			LICENSE			GNULGPL
+			ADDRESS			git@github.com:BenjaminNavarro/wui-cpp.git
+            PUBLIC_ADDRESS	https://github.com/BenjaminNavarro/wui-cpp.git
+			DESCRIPTION		"An easy to use Web-based GUI for your C++ programs"
+			README			instructions.md
+			VERSION			0 1 0
 		)
-
-set_PID_Package_Version(0 1 0)
 
 check_PID_Platform(CONFIGURATION posix)
 
