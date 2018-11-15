@@ -5,11 +5,16 @@ include(Package_Definition NO_POLICY_SCOPE)
 
 PROJECT(wui-cpp)
 
-declare_PID_Package(
-			AUTHOR      idhuser
-			YEAR        2018
-			LICENSE     CeCILL
-			DESCRIPTION TODO: input a short description of package wui-cpp utility here
+declare_Package(
+			"Benjamin Navarro"
+			LIRMM
+			navarro@lirmm.fr
+			2018
+			GNULGPL
+			git@github.com:BenjaminNavarro/wui-cpp.git
+            https://github.com/BenjaminNavarro/wui-cpp.git
+			"An easy to use Web-based GUI for your C++ programs"
+			instructions.md
 		)
 
 set_PID_Package_Version(0 1 0)
