@@ -15,7 +15,7 @@ declare_PID_Package(
             PUBLIC_ADDRESS	https://github.com/BenjaminNavarro/wui-cpp.git
 			DESCRIPTION		"An easy to use Web-based GUI for your C++ programs"
 			README			instructions.md
-			VERSION			0 1 0
+			VERSION			0.2.0
 		)
 
 check_PID_Platform(CONFIGURATION posix)
