@@ -154,7 +154,9 @@ Server::Server(int port, const std::string& address) {
 
 }
 
-Server::~Server() = default;
+Server::~Server() {
+	stop();
+}
 
 void Server::startSync() {
 	server_.start();
