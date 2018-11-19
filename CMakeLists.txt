@@ -13,7 +13,7 @@ declare_PID_Package(
 			LICENSE			GNULGPL
 			ADDRESS			git@github.com:BenjaminNavarro/wui-cpp.git
             PUBLIC_ADDRESS	https://github.com/BenjaminNavarro/wui-cpp.git
-			DESCRIPTION		"An easy to use Web-based GUI for your C++ programs"
+			DESCRIPTION		"WUI-CPP is an easy to use Web-based GUI for your C++ programs."
 			README			instructions.md
 			VERSION			0.2.0
 		)
