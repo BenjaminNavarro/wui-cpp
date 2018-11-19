@@ -15,7 +15,7 @@ std::ostream& operator<< (std::ostream &os, const Point2D& pt) {
 	return os;
 }
 
-int main(int argc, char const *argv[]) {
+int main() {
 	// Create a server on port 8080
 	wui::Server server(8080);
 
@@ -82,11 +82,4 @@ int main(int argc, char const *argv[]) {
 		std::cout << "\tlow: " << bounds.first << "\thigh: " << bounds.second << "         " << std::flush;
 	}
 	std::cout << std::endl;
-
-	// Unregister CTRL-C
-	pid::SignalManager::unregisterCallback(pid::SignalManager::Interrupt, "stop");
-
-	server.stop();
-
-	return 0;
 }
