@@ -21,7 +21,7 @@ public:
 					 return std::to_string(lower_bound) + "/" + std::to_string(upper_bound);
 				 };
 		setter = [this](const wui::property& p){
-					 internal_state_ = std::make_pair(p.get<ValueT>("lower_bound"), p.get<ValueT>("upper_bound"));
+					 internal_state_ = std::make_pair(static_cast<ValueT>(p.get<double>("lower_bound")), static_cast<ValueT>(p.get<double>("upper_bound")));
 				 };
 		update = [this, &lower_bound, &upper_bound](){
 					 std::tie(lower_bound, upper_bound) = std::any_cast<pair_t>(internal_state_);

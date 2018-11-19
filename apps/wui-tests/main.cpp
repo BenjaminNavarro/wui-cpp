@@ -27,14 +27,14 @@ int main(int argc, char const *argv[]) {
 	double p_gain = 20.;
 	double i_gain = 0.1;
 	double d_gain = 2.5;
-	float size = 12.f;
-	auto bounds = std::make_pair<double,double>(-10., 10.);
+	int size = 12;
+	auto bounds = std::make_pair<int,int>(-10., 10.);
 	double progress = 0.;
 	bool reset = false;
 	bool stop_progress = false;
 
 	// Add some widgets in the root container
-	server.add<wui::Slider>     ("Size",            size,           10.f,           20.f);          // Name, reference, min, max
+	server.add<wui::Slider>     ("Size",            size,           10,             20);            // Name, reference, min, max
 	server.add<wui::Range>      ("Bounds",          bounds.first,   bounds.second,  -20.,   20.f);  // Name, lower bound reference, upper bound reference, min, max
 	server.add<wui::ProgressBar>("Progress",        progress,       100.);                          // Name, reference, scale (progress bar = reference * scale). Here 0 <= progress <= 1
 	server.add<wui::Button>     ("Reset",           reset);
