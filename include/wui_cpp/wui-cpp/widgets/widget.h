@@ -1,6 +1,5 @@
 #pragma once
 
-#include <boost/property_tree/ptree.hpp>
 #include <nlohmann/json_fwd.hpp>
 
 #include <string>
@@ -8,7 +7,7 @@
 
 namespace wui {
 
-using property = boost::property_tree::ptree;
+using property = nlohmann::json;
 
 class Server;
 class Widget;
@@ -37,5 +36,10 @@ protected:
 };
 
 using WidgetPtr = std::shared_ptr<Widget>;
+
+namespace internal {
+double readPropertyAsDouble(const property& p, const std::string& key);
+bool readPropertyAsBool(const property& p, const std::string& key);
+}
 
 }

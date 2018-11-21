@@ -480,7 +480,7 @@ export module wuicpp {
                     function() {
                         axios.post(this_obj._server_ip + '/set_value', {
                             id: widget.id,
-                            state: 'true'
+                            state: true
                         }, {
                                 responseType: 'text'
                             }).catch(function(error) {

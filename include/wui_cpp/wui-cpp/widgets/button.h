@@ -15,7 +15,7 @@ public:
 					 return std::to_string(internal_state_);
 				 };
 		setter = [this](const wui::property& p){
-					 internal_state_ = p.get<bool>("state");
+					 internal_state_ = internal::readPropertyAsBool(p, "state");
 				 };
 		update = [this, &state](){
 					 state = internal_state_;

@@ -1,8 +1,14 @@
 #include <wui-cpp/wui.h>
-#include <pid/signal_manager.h>
 
-#include <ostream>
+#include <iostream>
 #include <chrono>
+#include <signal.h>
+
+bool _stop = false;
+
+void sigint_handler(int) {
+	_stop = true;
+}
 
 // Custom data type with an output stream operator
 struct Point2D {
@@ -15,9 +21,14 @@ std::ostream& operator<< (std::ostream &os, const Point2D& pt) {
 	return os;
 }
 
-int main() {
+int main(int argc, char* argv[]) {
+	// Default path if launched from a standard location (e.g. PID install tree)
+	std::string web_root_path = "../share/resources/wui-cpp";
+	if(argc > 1) {
+		web_root_path = argv[1];
+	}
 	// Create a server on port 8080
-	wui::Server server(8080);
+	wui::Server wui(web_root_path, 8080);
 
 	// Program variables that need to be read/write from the UI
 	double velocity = 0.;
@@ -34,16 +45,16 @@ int main() {
 	bool stop_progress = false;
 
 	// Add some widgets in the root container
-	server.add<wui::Slider>     ("Size",            size,           10,             20);            // Name, reference, min, max
-	server.add<wui::Range>      ("Bounds",          bounds.first,   bounds.second,  -20.,   20.f);  // Name, lower bound reference, upper bound reference, min, max
-	server.add<wui::ProgressBar>("Progress",        progress,       100.);                          // Name, reference, scale (progress bar = reference * scale). Here 0 <= progress <= 1
-	server.add<wui::Button>     ("Reset",           reset);
-	server.add<wui::Switch>     ("Stop",            stop_progress);
-	server.add<wui::Label>      ("current size",    size,           "mm");                          // Name, reference, suffix
-	server.add<wui::Label>      ("Point",           point);
+	wui.add<wui::Slider>     ("Size",            size,           10,             20);            // Name, reference, min, max
+	wui.add<wui::Range>      ("Bounds",          bounds.first,   bounds.second,  -20.,   20.f);  // Name, lower bound reference, upper bound reference, min, max
+	wui.add<wui::ProgressBar>("Progress",        progress,       100.);                          // Name, reference, scale (progress bar = reference * scale). Here 0 <= progress <= 1
+	wui.add<wui::Button>     ("Reset",           reset);
+	wui.add<wui::Switch>     ("Stop",            stop_progress);
+	wui.add<wui::Label>      ("current size",    size,           "mm");                          // Name, reference, suffix
+	wui.add<wui::Label>      ("Point",           point);
 
 	// Create a Tab container inside the root container
-	auto tabs = server.add<wui::Tabs>("tabs");
+	auto tabs = wui.add<wui::Tabs>("tabs");
 	// Add widgets inside the tabs
 	tabs->add<wui::Slider>  ("Gains", "P gain",       p_gain,         0.,     100.);    // Tab name, Name, reference, min, max
 	tabs->add<wui::Slider>  ("Gains", "I gain",       i_gain,         0.,     1.);
@@ -53,18 +64,18 @@ int main() {
 	tabs->add<wui::Label>   ("State", "State",        state);
 
 	// Start the server asynchronously so that it serves requests in the background
-	server.startAsync();
+	wui.start();
+	std::cout << "wui server started on http://localhost:8080" << std::endl;
 
 	// Register a callback to exit the main loop en CTRL-C
-	bool stop = false;
-	pid::SignalManager::registerCallback(pid::SignalManager::Interrupt, "stop", [&stop](int){stop = true;});
+	signal(SIGINT, sigint_handler);
 
-	while(not stop) {
+	while(not _stop) {
 		std::this_thread::sleep_for(std::chrono::milliseconds(10));
 		// Update the GUI and program state.
 		// For control widgets (e.g. Slider): update the local variables with the values set in the GUI
 		// For Label widgets: update their displayed value according to the local variables' state
-		server.update();
+		wui.update();
 
 		// Do some stuff
 		velocity = static_cast<double>(std::rand())/RAND_MAX;

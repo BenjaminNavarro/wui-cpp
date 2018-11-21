@@ -2,6 +2,7 @@
 
 #include <wui-cpp/widgets/widget.h>
 #include <any>
+#include <sstream>
 
 namespace wui {
 

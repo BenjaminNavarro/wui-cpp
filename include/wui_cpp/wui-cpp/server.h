@@ -2,21 +2,20 @@
 
 #include <wui-cpp/widgets/widget_container.h>
 
-#include <simple-web-server/server_http.hpp>
 #include <string>
 #include <vector>
 #include <thread>
 #include <mutex>
+#include <memory>
 
 namespace wui {
 
 class Server {
 public:
-	Server(int port, const std::string& address = "");
+	Server(const std::string& root_path, int port, const std::string& address = "");
 	virtual ~Server();
 
-	void startSync();
-	void startAsync();
+	void start();
 	void stop();
 	void update();
 
@@ -26,17 +25,15 @@ public:
 		if constexpr(std::is_base_of_v<WidgetContainer, WidgetT>) {
 			widget_ptr->server_ = this;
 		}
-		widgets_.push_back(widget_ptr);
-		widget_ptr->id = widgets_.size()-1;
+		addWidget(widget_ptr);
 		return widget_ptr;
 	}
 
 private:
-	SimpleWeb::Server<SimpleWeb::HTTP> server_;
-	std::thread server_asyn_thread_;
+	struct pImpl;
+	std::unique_ptr<pImpl> impl_;
 
-	std::vector<WidgetPtr> widgets_;
-	std::mutex update_mutex_;
+	void addWidget(WidgetPtr widget);
 };
 
 }

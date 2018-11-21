@@ -18,7 +18,7 @@ public:
 					 return std::to_string(std::any_cast<ValueT>(internal_state_));
 				 };
 		setter = [this](const wui::property& p){
-					 internal_state_ = static_cast<ValueT>(p.get<double>("value"));
+					 internal_state_ = static_cast<ValueT>(internal::readPropertyAsDouble(p, "value"));
 				 };
 		update = [this, &value](){
 					 value = std::any_cast<ValueT>(this->internal_state_);

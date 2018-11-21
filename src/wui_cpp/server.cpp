@@ -1,42 +1,46 @@
 #include <wui-cpp/server.h>
 #include <wui-cpp/widgets/widget.h>
 
-#include <pid/rpath.h>
-
-// for JSON
-#define BOOST_SPIRIT_THREADSAFE
-#include <boost/property_tree/ptree.hpp>
-#include <boost/property_tree/json_parser.hpp>
-#include <boost/property_tree/ptree.hpp>
-
 #include <algorithm>
-#include <boost/filesystem.hpp>
+#include <filesystem>
 #include <fstream>
 #include <vector>
 
+#include <simple-web-server/server_http.hpp>
 #include <nlohmann/json.hpp>
 
 namespace wui {
 using HttpServer = SimpleWeb::Server<SimpleWeb::HTTP>;
 
-Server::Server(int port, const std::string& address) {
-	server_.config.port = port;
-	server_.config.address = address;
+struct Server::pImpl {
+	HttpServer server;
+	std::thread server_async_thread;
+
+	std::vector<WidgetPtr> widgets;
+	std::mutex update_mutex;
+};
+
+Server::Server(const std::string& root_path, int port, const std::string& address) :
+	impl_(std::make_unique<Server::pImpl>())
+{
+	impl_->server.config.port = port;
+	impl_->server.config.address = address;
+
+	auto web_root_path = std::filesystem::canonical(root_path);
 
 	// Default GET-example. If no other matches, this anonymous function will be called.
 	// Will respond with content in the web/-directory, and its subdirectories.
 	// Default file: index.html
 	// Can for instance be used to retrieve an HTML 5 client that uses REST-resources on this server
-	server_.default_resource["GET"] =
-		[](std::shared_ptr<HttpServer::Response> response, std::shared_ptr<HttpServer::Request> request) {
+	impl_->server.default_resource["GET"] =
+		[web_root_path](std::shared_ptr<HttpServer::Response> response, std::shared_ptr<HttpServer::Request> request) {
 			try {
-				auto web_root_path = boost::filesystem::canonical(PID_PATH("wui-cpp/web"));
-				auto path = boost::filesystem::canonical(web_root_path / request->path);
+				auto path = std::filesystem::canonical(web_root_path.string() + request->path);
 				// Check if path is within web_root_path
 				if(std::distance(web_root_path.begin(), web_root_path.end()) > std::distance(path.begin(), path.end()) ||
 				   !std::equal(web_root_path.begin(), web_root_path.end(), path.begin()))
 					throw std::invalid_argument("path must be within root path");
-				if(boost::filesystem::is_directory(path))
+				if(std::filesystem::is_directory(path))
 					path /= "index.html";
 
 				SimpleWeb::CaseInsensitiveMultimap header;
@@ -80,27 +84,35 @@ Server::Server(int port, const std::string& address) {
 			}
 		};
 
-	server_.on_error =
+	impl_->server.on_error =
 		[](std::shared_ptr<HttpServer::Request> /*request*/, const SimpleWeb::error_code & /*ec*/) {
 			// Handle errors here
 			// Note that connection timeouts will also call this handle with ec set to SimpleWeb::errc::operation_canceled
 		};
 
-	server_.resource["^/set_value$"]["POST"] =
+	impl_->server.resource["^/set_value$"]["POST"] =
 		[this](std::shared_ptr<HttpServer::Response> response, std::shared_ptr<HttpServer::Request> request) {
 			try {
-				boost::property_tree::ptree pt;
-				read_json(request->content, pt);
+				auto json = nlohmann::json::parse(request->content);
+				auto id = json["id"].get<int>();
 
-				auto id = pt.get<int>("id");
-				try {
-					std::unique_lock<std::mutex> lock(update_mutex_);
-					widgets_.at(id)->setter(pt);
-				}
-				catch(...)  {
-					auto error = "no setter with ID=" + std::to_string(id) + " has been registered";
+				if(id >= impl_->widgets.size()) {
+					auto error = "no widget with ID=" + std::to_string(id) + " has been registered";
 					std::cerr << "wui::Server: " << error << "\n";
 					response->write(SimpleWeb::StatusCode::client_error_bad_request, error);
+					return;
+				}
+
+				try {
+					std::unique_lock<std::mutex> lock(impl_->update_mutex);
+					impl_->widgets.at(id)->setter(json);
+
+				}
+				catch(const std::exception& e)  {
+					auto error = "impossible to configure widget with ID=" + std::to_string(id) + " (" + e.what() + ")";
+					std::cerr << "wui::Server: " << error << "\n";
+					response->write(SimpleWeb::StatusCode::client_error_bad_request, error);
+					return;
 				}
 
 				response->write(SimpleWeb::StatusCode::success_ok);
@@ -111,15 +123,13 @@ Server::Server(int port, const std::string& address) {
 			}
 		};
 
-	server_.resource["^/get_value$"]["POST"] =
+	impl_->server.resource["^/get_value$"]["POST"] =
 		[this](std::shared_ptr<HttpServer::Response> response, std::shared_ptr<HttpServer::Request> request) {
-			boost::property_tree::ptree pt;
-			read_json(request->content, pt);
-
-			auto id = pt.get<int>("id");
+			auto json = nlohmann::json::parse(request->content);
+			auto id = json["id"].get<int>();
 			try {
-				std::unique_lock<std::mutex> lock(update_mutex_);
-				response->write(widgets_.at(id)->getter());
+				std::unique_lock<std::mutex> lock(impl_->update_mutex);
+				response->write(impl_->widgets.at(id)->getter());
 			}
 			catch(...)  {
 				auto error = "no getter with ID=" + std::to_string(id) + " has been registered";
@@ -128,14 +138,14 @@ Server::Server(int port, const std::string& address) {
 			}
 		};
 
-	server_.resource["^/get_ui$"]["GET"] =
+	impl_->server.resource["^/get_ui$"]["GET"] =
 		[this](std::shared_ptr<HttpServer::Response> response, std::shared_ptr<HttpServer::Request> request) {
 			using json = nlohmann::json;
 
 			json j;
 			j["widgets"] = json::array();
-			for (size_t i = 0; i < widgets_.size(); ++i) {
-				json widget_desc = *widgets_[i];
+			for (size_t i = 0; i < impl_->widgets.size(); ++i) {
+				json widget_desc = *impl_->widgets[i];
 				widget_desc["id"] = i;
 				j["widgets"].push_back(widget_desc);
 			}
@@ -158,26 +168,27 @@ Server::~Server() {
 	stop();
 }
 
-void Server::startSync() {
-	server_.start();
-}
-
-void Server::startAsync() {
-	server_asyn_thread_ = std::thread([this](){server_.start();});
+void Server::start() {
+	impl_->server_async_thread = std::thread([this](){impl_->server.start();});
 }
 
 void Server::stop() {
-	server_.stop();
-	if(server_asyn_thread_.joinable()) {
-		server_asyn_thread_.join();
+	impl_->server.stop();
+	if(impl_->server_async_thread.joinable()) {
+		impl_->server_async_thread.join();
 	}
 }
 
 void Server::update() {
-	std::unique_lock<std::mutex> lock(update_mutex_);
-	for(auto& widget: widgets_) {
+	std::unique_lock<std::mutex> lock(impl_->update_mutex);
+	for(auto& widget: impl_->widgets) {
 		widget->update();
 	}
+}
+
+void Server::addWidget(WidgetPtr widget) {
+	impl_->widgets.push_back(widget);
+	widget->id = impl_->widgets.size()-1;
 }
 
 }

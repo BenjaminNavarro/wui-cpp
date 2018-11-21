@@ -18,10 +18,6 @@ declare_PID_Package(
 			VERSION			0.3.0
 		)
 
-check_PID_Platform(CONFIGURATION posix)
-
-declare_PID_Package_Dependency(PACKAGE pid-rpath NATIVE VERSION 2.0)
-declare_PID_Package_Dependency(PACKAGE pid-os-utilities NATIVE VERSION 2.0)
 declare_PID_Package_Dependency(PACKAGE simple-web-server EXTERNAL VERSION 3.0)
 declare_PID_Package_Dependency(PACKAGE json EXTERNAL VERSION 3.4)
 

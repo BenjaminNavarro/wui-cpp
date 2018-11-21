@@ -411,7 +411,7 @@ define("wuicpp", ["require", "exports", "axios"], function (require, exports, ax
                 }).addEventHandler('click', function () {
                     axios_1.default.post(this_obj._server_ip + '/set_value', {
                         id: widget.id,
-                        state: 'true'
+                        state: true
                     }, {
                         responseType: 'text'
                     }).catch(function (error) {
