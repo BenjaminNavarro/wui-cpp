@@ -11,7 +11,8 @@ With a few lines of code, you can start a web server and describe the content of
 
 int main() {
 	// Create a wui server on port 8080
-	wui::Server wui(8080);
+	std::string web_root_path = "../share/resources/wui-cpp";
+	wui::Server wui(web_root_path, 8080);
 
 	double robot_max_velocity = 1.;
 	double robot_current_velocity = 0.;
@@ -24,7 +25,7 @@ int main() {
 	wui.add<wui::Label> ("Current state", state);                                       // name, variable to display
 
 	// Start the wui server asynchronously so that it serves requests in the background
-	wui.startAsync();
+	wui.start();
 
 	while(isRobotOk()) {
 		std::this_thread::sleep_for(std::chrono::milliseconds(10));
