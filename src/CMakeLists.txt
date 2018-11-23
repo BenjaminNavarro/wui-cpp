@@ -1,5 +1,5 @@
 function(create_wui_component type name)
-    declare_PID_Component(
+    PID_Component(
         ${type}
         NAME ${name}
         DIRECTORY wui_cpp

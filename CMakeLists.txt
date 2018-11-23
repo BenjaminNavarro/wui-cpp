@@ -5,7 +5,7 @@ include(Package_Definition NO_POLICY_SCOPE)
 
 PROJECT(wui-cpp)
 
-declare_PID_Package(
+PID_Package(
 			AUTHOR 			"Benjamin Navarro"
 			INSTITUTION		LIRMM
 			MAIL			navarro@lirmm.fr
@@ -18,7 +18,7 @@ declare_PID_Package(
 			VERSION			0.5.0
 		)
 
-declare_PID_Package_Dependency(PACKAGE simple-web-server EXTERNAL VERSION 3.0)
-declare_PID_Package_Dependency(PACKAGE json EXTERNAL VERSION 3.4)
+PID_Dependency(simple-web-server VERSION 3.0)
+PID_Dependency(json VERSION 3.4)
 
 build_PID_Package()
