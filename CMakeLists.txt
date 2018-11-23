@@ -15,7 +15,7 @@ declare_PID_Package(
             PUBLIC_ADDRESS	https://github.com/BenjaminNavarro/wui-cpp.git
 			DESCRIPTION		"WUI-CPP is an easy to use Web-based GUI for your C++ programs."
 			README			instructions.md
-			VERSION			0.4.0
+			VERSION			0.5.0
 		)
 
 declare_PID_Package_Dependency(PACKAGE simple-web-server EXTERNAL VERSION 3.0)
