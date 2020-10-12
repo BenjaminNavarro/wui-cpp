@@ -20,6 +20,6 @@ PID_Package(
 )
 
 PID_Dependency(simple-web-server VERSION 3.0)
-PID_Dependency(json VERSION 3.4)
+PID_Dependency(json FROM VERSION 3.9.1)
 
 build_PID_Package()
