@@ -5,8 +5,9 @@ function(create_wui_component type name)
         DIRECTORY wui_cpp
         CXX_STANDARD 17
         RUNTIME_RESOURCES wui-cpp
-        EXPORT simple-web-server json
-        EXPORTED LINKS -lstdc++fs
+        EXPORT 
+            simple-web-server/simple-web-server 
+            json/json
     )
 endfunction()
 
