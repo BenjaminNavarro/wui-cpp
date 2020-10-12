@@ -3,6 +3,7 @@
 define("wuicpp", ["require", "exports", "axios"], function (require, exports, axios_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
+    exports.createWuiApp = exports.wuicpp = void 0;
     var wuicpp;
     (function (wuicpp) {
         class CellValue {
@@ -445,6 +446,7 @@ define("wuicpp", ["require", "exports", "axios"], function (require, exports, ax
                 jqwidgets.createInstance('#' + switch_btn.id, 'jqxSwitchButton', {
                     width: '120px',
                     height: '35px',
+                    checked: Boolean(widget.options.default),
                     theme: 'bootstrap'
                 }).addEventHandler('change', function (event) {
                     axios_1.default.post(this_obj._server_ip + '/set_value', {
