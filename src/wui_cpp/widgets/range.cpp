@@ -4,10 +4,10 @@
 namespace wui {
 
 void Range::toJson(nlohmann::json& j) const {
-	j["name"] = name;
-	j["type"] = "range";
-	j["options"] = { {"min", min}, {"max", max}, {"default", getter()} };
-	j["container"] = container;
+    j["name"] = name;
+    j["type"] = "range";
+    j["options"] = {{"min", min}, {"max", max}, {"default", getter()}};
+    j["container"] = container;
 }
 
-}
+} // namespace wui

@@ -4,10 +4,10 @@
 namespace wui {
 
 void Tabs::toJson(nlohmann::json& j) const {
-	j["name"] = name;
-	j["type"] = "tabs";
-	j["tabs"] = tabs_;
-	j["container"] = container;
+    j["name"] = name;
+    j["type"] = "tabs";
+    j["tabs"] = tabs_;
+    j["container"] = container;
 }
 
-}
+} // namespace wui

@@ -7,15 +7,12 @@ namespace wui {
 
 class WidgetContainer : public Widget {
 public:
-	WidgetContainer(std::string name) :
-		Widget(name)
-	{
-	}
-
+    WidgetContainer(std::string name) : Widget(name) {
+    }
 
 protected:
-	friend class Server;
-	Server* server_;
+    friend class Server;
+    Server* server_;
 };
 
-}
+} // namespace wui
