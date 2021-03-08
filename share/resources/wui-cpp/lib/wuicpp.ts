@@ -526,7 +526,7 @@ export module wuicpp {
                 {
                     width: '120px',
                     height: '35px',
-                    checked: Boolean(widget.options.default),
+                    checked: widget.options.default == "1",
                     theme: 'bootstrap'
                 }).addEventHandler('change',
                     function(event) {

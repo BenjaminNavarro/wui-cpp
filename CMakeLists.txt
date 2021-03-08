@@ -16,7 +16,7 @@ PID_Package(
     DESCRIPTION     "WUI-CPP is an easy to use Web-based GUI for your C++ programs."
     README          instructions.md
     CODE_STYLE      pid11
-    VERSION         0.6.0
+    VERSION         0.5.2
 )
 
 PID_Dependency(simple-web-server VERSION 3.0)

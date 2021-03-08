@@ -446,7 +446,7 @@ define("wuicpp", ["require", "exports", "axios"], function (require, exports, ax
                 jqwidgets.createInstance('#' + switch_btn.id, 'jqxSwitchButton', {
                     width: '120px',
                     height: '35px',
-                    checked: Boolean(widget.options.default),
+                    checked: widget.options.default == "1",
                     theme: 'bootstrap'
                 }).addEventHandler('change', function (event) {
                     axios_1.default.post(this_obj._server_ip + '/set_value', {
