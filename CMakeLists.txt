@@ -19,6 +19,7 @@ PID_Package(
     VERSION         0.5.2
 )
 
+check_PID_Environment(TOOL conventional_commits)
 check_PID_Environment(LANGUAGE CXX[std=17])
 
 PID_Dependency(simple-web-server VERSION 3.0)
