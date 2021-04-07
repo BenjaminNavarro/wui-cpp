@@ -1,8 +1,10 @@
 
-Overview
-=========
+wui-cpp
+==============
 
-WUI-CPP is an easy to use Web-based GUI for your C++ programs.
+WUI-CPP is an easy to use Web-based GUI for your C++ programs
+
+
 
 With a few lines of code, you can start a web server and describe the content of the user interface using the available widgets:
 ```cpp
@@ -11,35 +13,35 @@ With a few lines of code, you can start a web server and describe the content of
 
 int main() {
 	// Create a wui server on port 8080
-	std::string web_root_path = "../share/resources/wui-cpp";
-	wui::Server wui(web_root_path, 8080);
+	std::string web_root_path = "../share/resources/wui-cpp"
+	wui::Server wui(web_root_path, 8080)
 
-	double robot_max_velocity = 1.;
-	double robot_current_velocity = 0.;
-	std::string state = "Initialization";
+	double robot_max_velocity = 1.
+	double robot_current_velocity = 0.
+	std::string state = "Initialization"
 
 	// Add some widgets
-	wui.add<wui::Slider>("Robot maximum velocity", robot_max_velocity, 0., 10.);        // name, variable to pilot, min & max values
-	wui.add<wui::Label> ("Robot maximum velocity", robot_max_velocity, "m/s");          // name, variable to display, suffix
-	wui.add<wui::Label> ("Robot current velocity", robot_current_velocity, "m/s", "~"); // name, variable to display, suffix, prefix
-	wui.add<wui::Label> ("Current state", state);                                       // name, variable to display
+	wui.add<wui::Slider>("Robot maximum velocity", robot_max_velocity, 0., 10.)        // name, variable to pilot, min & max values
+	wui.add<wui::Label> ("Robot maximum velocity", robot_max_velocity, "m/s")          // name, variable to display, suffix
+	wui.add<wui::Label> ("Robot current velocity", robot_current_velocity, "m/s", "~") // name, variable to display, suffix, prefix
+	wui.add<wui::Label> ("Current state", state)                                       // name, variable to display
 
 	// Start the wui server asynchronously so that it serves requests in the background
-	wui.start();
+	wui.start()
 
 	while(isRobotOk()) {
-		std::this_thread::sleep_for(std::chrono::milliseconds(10));
+		std::this_thread::sleep_for(std::chrono::milliseconds(10))
 
-		robot_current_velocity = getRobotCurrentVelocity();
-		state = getRobotState();
+		robot_current_velocity = getRobotCurrentVelocity()
+		state = getRobotState()
 
 		// Update the GUI and program state.
 		// For output widgets (e.g. Label): update their displayed value according to the local variables' state
 		// For control widgets (e.g. Slider): update the local variables with the values set in the GUI
-		wui.update();
+		wui.update()
 
 		// Do some stuff
-		setRobotMaxVelocity(robot_max_velocity);
+		setRobotMaxVelocity(robot_max_velocity)
 	}
 }
 ```
@@ -97,77 +99,132 @@ The future plans for WUI-CPP
  - Make real time plotting of `wui::Label`s possible
 
 
-The license that applies to the whole package content is **GNULGPL**. Please look at the license.txt file at the root of this repository.
+Package Overview
+================
+
+The **wui-cpp** package contains the following:
+
+ * Libraries:
+
+   * wui-cpp (shared)
+
+   * wui-cpp-st (static)
+
+ * Examples:
+
+   * wui-example
+
 
 Installation and Usage
-=======================
+======================
 
-The detailed procedures for installing the wui-cpp package and for using its components is based on the [PID](http://pid.lirmm.net/pid-framework/pages/install.html) build and deployment system called PID. Just follow and read the links to understand how to install, use and call its API and/or applications.
+The **wui-cpp** project is packaged using [PID](http://pid.lirmm.net), a build and deployment system based on CMake.
 
-For a quick installation:
+If you wish to adopt PID for your develoment please first follow the installation procedure [here](http://pid.lirmm.net/pid-framework/pages/install.html).
 
-## Installing the project into an existing PID workspace
+If you already are a PID user or wish to integrate **wui-cpp** in your current build system, please read the appropriate section below.
 
-To get last version :
- ```
+
+## Using an existing PID workspace
+
+This method is for developers who want to install and access **wui-cpp** from their PID workspace.
+
+You can use the `deploy` command to manually install **wui-cpp** in the workspace:
+```
 cd <path to pid workspace>
-pid deploy package=wui-cpp
+pid deploy package=wui-cpp # latest version
+# OR
+pid deploy package=wui-cpp version=x.y.z # specific version
+```
+Alternatively you can simply declare a dependency to **wui-cpp** in your package's `CMakeLists.txt` and let PID handle everything:
+```
+PID_Dependency(wui-cpp) # any version
+# OR
+PID_Dependency(wui-cpp VERSION x.y.z) # any version compatible with x.y.z
 ```
 
-To get a specific version of the package :
- ```
-cd <path to pid workspace>
-pid deploy package=wui-cpp version=<version number>
-```
+If you need more control over your dependency declaration, please look at [PID_Dependency](https://pid.lirmm.net/pid-framework/assets/apidoc/html/pages/Package_API.html#pid-dependency) documentation.
 
-## Standalone install
+Once the package dependency has been added, you can use the following components as component dependencies:
+ * `wui-cpp/wui-cpp`
+ * `wui-cpp/wui-cpp-st`
+
+You can read [PID_Component](https://pid.lirmm.net/pid-framework/assets/apidoc/html/pages/Package_API.html#pid-component) and [PID_Component_Dependency](https://pid.lirmm.net/pid-framework/assets/apidoc/html/pages/Package_API.html#pid-component-dependency) documentations for more details.
+## Standalone installation
+
+This method allows to build the package without having to create a PID workspace manually. This method is UNIX only.
+
+All you need to do is to first clone the package locally and then run the installation script:
  ```
-git clone https://github.com/BenjaminNavarro/wui-cpp.git
+git clone https://gite.lirmm.fr/pid/gui/wui-cpp.git
 cd wui-cpp
+./share/install/standalone_install.sh
 ```
+The package as well as its dependencies will be deployed under `binaries/pid-workspace`.
 
-Then run the adequate install script depending on your system. For instance on linux:
-```
-sh share/install/standalone_install.sh
-```
+You can pass `--help` to the script to list the available options.
 
-The pkg-config tool can be used to get all links and compilation flags for the libraries defined in the project.
+### Using **wui-cpp** in a CMake project
+There are two ways to integrate **wui-cpp** in CMake project: the external API or a system install.
 
-To let pkg-config know these libraries, read the output of the install_script and apply the given command to configure the PKG_CONFIG_PATH.
+The first one doesn't require the installation of files outside of the package itself and so is well suited when used as a Git submodule for example.
+Please read [this page](https://pid.lirmm.net/pid-framework/pages/external_API_tutorial.html#using-cmake) for more information.
 
-For instance on linux do:
-```
-export PKG_CONFIG_PATH=<given path>:$PKG_CONFIG_PATH
-```
+The second option is more traditional as it installs the package and its dependencies in a given system folder which can then be retrived using `find_package(wui-cpp)`.
+You can pass the `--install <path>` option to the installation script to perform the installation and then follow [these steps](https://pid.lirmm.net/pid-framework/pages/external_API_tutorial.html#third-step--extra-system-configuration-required) to configure your environment, find PID packages and link with their components.
+### Using **wui-cpp** with pkg-config
+You can pass `--pkg-config on` to the installation script to generate the necessary pkg-config files.
+Upon completion, the script will tell you how to set the `PKG_CONFIG_PATH` environment variable for **wui-cpp** to be discoverable.
 
-Then, to get compilation flags run:
-
-```
-pkg-config --static --cflags wui-cpp_<name of library>
-```
+Then, to get the necessary compilation flags run:
 
 ```
-pkg-config --variable=c_standard wui-cpp_<name of library>
+pkg-config --static --cflags wui-cpp_<component>
 ```
 
 ```
-pkg-config --variable=cxx_standard wui-cpp_<name of library>
+pkg-config --variable=c_standard wui-cpp_<component>
 ```
 
-To get linker flags run:
-
 ```
-pkg-config --static --libs wui-cpp_<name of library>
+pkg-config --variable=cxx_standard wui-cpp_<component>
 ```
 
+To get the linker flags run:
 
-About authors
-=====================
+```
+pkg-config --static --libs wui-cpp_<component>
+```
 
-wui-cpp has been developped by following authors: 
-+ Benjamin Navarro (LIRMM)
-
-Please contact Benjamin Navarro (navarro@lirmm.fr) - LIRMM for more information or questions.
-
+Where `<component>` is one of:
+ * `wui-cpp`
+ * `wui-cpp-st`
 
 
+# Online Documentaion
+**wui-cpp** documentation is available [online](https://pid.lirmm.net/pid-framework/packages/wui-cpp).
+You can find:
+
+
+Offline API Documentation
+=========================
+
+With [Doxygen](https://www.doxygen.nl) installed, the API documentation can be built locally by turning the `BUILD_API_DOC` CMake option `ON` and running the `doc` target, e.g
+```
+pid cd wui-cpp
+pid -DBUILD_API_DOC=ON doc
+```
+The resulting documentation can be accessed by opening `<path to wui-cpp>/build/release/share/doc/html/index.html` in a web browser.
+
+License
+=======
+
+The license that applies to the whole package content is **GNULGPL**. Please look at the [license.txt](./license.txt) file at the root of this repository for more details.
+
+Authors
+=======
+
+**wui-cpp** has been developed by the following authors: 
++ Benjamin Navarro (LIRMM / CNRS)
+
+Please contact Benjamin Navarro (navarro@lirmm.fr) - LIRMM / CNRS for more information or questions.

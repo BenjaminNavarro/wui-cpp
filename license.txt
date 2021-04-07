@@ -1,9 +1,9 @@
 
 Software license for the software named : wui-cpp
 
-Software description : WUI-CPP is an easy to use Web-based GUI for your C++ programs.
+Software description : WUI-CPP is an easy to use Web-based GUI for your C++ programs
 
-Copyright (C) 2018-2020  Benjamin Navarro (LIRMM)
+Copyright (C) 2018-2021  Benjamin Navarro (LIRMM / CNRS)
 
 This software is free software: you can redistribute it and/or modify it under the terms of the LGPL license as published by
  the Free Software Foundation, either version 3 of the License, or (at your option) any later version. This software
