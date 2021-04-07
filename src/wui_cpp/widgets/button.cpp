@@ -4,9 +4,9 @@
 namespace wui {
 
 void Button::toJson(nlohmann::json& j) const {
-    j["name"] = name;
+    j["name"] = name_;
     j["type"] = "button";
-    j["container"] = container;
+    j["container"] = container_;
 }
 
 } // namespace wui

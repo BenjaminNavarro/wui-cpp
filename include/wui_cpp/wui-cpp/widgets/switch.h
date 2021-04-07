@@ -9,15 +9,17 @@ class Switch : public Widget {
 public:
     Switch(const std::string& name, bool& state) : Widget(name) {
         internal_state_ = state;
-        getter = [this]() { return std::to_string(internal_state_); };
-        setter = [this](const wui::property& p) {
+        getter_ = [this]() {
+            return std::to_string(static_cast<int>(internal_state_));
+        };
+        setter_ = [this](const wui::property& p) {
             internal_state_ = internal::readPropertyAsBool(p, "state");
         };
-        update = [this, &state]() { state = internal_state_; };
+        update_ = [this, &state]() { state = internal_state_; };
     }
 
 protected:
-    virtual void toJson(nlohmann::json& j) const override;
+    void toJson(nlohmann::json& j) const override;
 
     bool internal_state_;
 };

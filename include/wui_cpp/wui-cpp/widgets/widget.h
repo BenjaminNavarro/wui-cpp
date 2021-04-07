@@ -12,11 +12,13 @@ using property = nlohmann::json;
 class Server;
 class Widget;
 
+// NOLINTNEXTLINE(readability-identifier-naming)
 void to_json(nlohmann::json& j, const Widget& widget);
 
 class Widget {
 public:
     Widget(std::string name);
+    virtual ~Widget() = default;
 
     void setContainer(const std::string& container);
 
@@ -24,13 +26,13 @@ protected:
     friend class Server;
     friend void to_json(nlohmann::json& j, const Widget& widget);
 
-    int id;
-    std::string name;
-    std::string container;
+    int id_;
+    std::string name_;
+    std::string container_;
 
-    std::function<std::string(void)> getter;
-    std::function<void(const property&)> setter;
-    std::function<void(void)> update;
+    std::function<std::string(void)> getter_;
+    std::function<void(const property&)> setter_;
+    std::function<void(void)> update_;
 
     virtual void toJson(nlohmann::json& j) const = 0;
 };

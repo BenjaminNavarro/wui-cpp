@@ -12,7 +12,7 @@ namespace wui {
 
 class Server {
 public:
-    Server(const std::string& root_path, int port,
+    Server(const std::string& root_path, unsigned short port,
            const std::string& address = "");
     virtual ~Server();
 
@@ -35,7 +35,7 @@ private:
     struct pImpl;
     std::unique_ptr<pImpl> impl_;
 
-    void addWidget(WidgetPtr widget);
+    void addWidget(const WidgetPtr& widget);
 };
 
 } // namespace wui

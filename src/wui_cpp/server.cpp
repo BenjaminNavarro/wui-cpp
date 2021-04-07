@@ -20,7 +20,7 @@ struct Server::pImpl {
     std::mutex update_mutex;
 };
 
-Server::Server(const std::string& root_path, int port,
+Server::Server(const std::string& root_path, unsigned short port,
                const std::string& address)
     : impl_(std::make_unique<Server::pImpl>()) {
     impl_->server.config.port = port;
@@ -33,8 +33,8 @@ Server::Server(const std::string& root_path, int port,
     // subdirectories. Default file: index.html Can for instance be used to
     // retrieve an HTML 5 client that uses REST-resources on this server
     impl_->server.default_resource["GET"] =
-        [web_root_path](std::shared_ptr<HttpServer::Response> response,
-                        std::shared_ptr<HttpServer::Request> request) {
+        [web_root_path](const std::shared_ptr<HttpServer::Response>& response,
+                        const std::shared_ptr<HttpServer::Request>& request) {
             try {
                 auto path = std::filesystem::canonical(web_root_path.string() +
                                                        request->path);
@@ -42,11 +42,13 @@ Server::Server(const std::string& root_path, int port,
                 if (std::distance(web_root_path.begin(), web_root_path.end()) >
                         std::distance(path.begin(), path.end()) ||
                     !std::equal(web_root_path.begin(), web_root_path.end(),
-                                path.begin()))
+                                path.begin())) {
                     throw std::invalid_argument(
                         "path must be within root path");
-                if (std::filesystem::is_directory(path))
+                }
+                if (std::filesystem::is_directory(path)) {
                     path /= "index.html";
+                }
 
                 SimpleWeb::CaseInsensitiveMultimap header;
 
@@ -64,10 +66,10 @@ Server::Server(const std::string& root_path, int port,
                     // Trick to define a recursive function within this scope
                     // (for example purposes)
                     struct FileServer {
-                        static void read_and_send(
-                            const std::shared_ptr<HttpServer::Response>&
-                                response,
-                            const std::shared_ptr<std::ifstream>& ifs) {
+                        static void
+                        readAndSend(const std::shared_ptr<HttpServer::Response>&
+                                        response,
+                                    const std::shared_ptr<std::ifstream>& ifs) {
                             // Read and send 128 KB at a time
                             static std::vector<char> buffer(
                                 131072); // Safe when server is running on one
@@ -84,20 +86,22 @@ Server::Server(const std::string& root_path, int port,
                                     response->send(
                                         [response,
                                          ifs](const SimpleWeb::error_code& ec) {
-                                            if (!ec)
-                                                read_and_send(response, ifs);
-                                            else
+                                            if (!ec) {
+                                                readAndSend(response, ifs);
+                                            } else {
                                                 std::cerr
                                                     << "Connection interrupted"
                                                     << std::endl;
+                                            }
                                         });
                                 }
                             }
                         }
                     };
-                    FileServer::read_and_send(response, ifs);
-                } else
+                    FileServer::readAndSend(response, ifs);
+                } else {
                     throw std::invalid_argument("could not read file");
+                }
             } catch (const std::exception& e) {
                 response->write(SimpleWeb::StatusCode::client_error_bad_request,
                                 "Could not open path " + request->path + ": " +
@@ -106,19 +110,19 @@ Server::Server(const std::string& root_path, int port,
         };
 
     impl_->server.on_error =
-        [](std::shared_ptr<HttpServer::Request> /*request*/,
-           const SimpleWeb::error_code& /*ec*/) {
+        []([[maybe_unused]] const std::shared_ptr<HttpServer::Request>& request,
+           [[maybe_unused]] const SimpleWeb::error_code& ec) {
             // Handle errors here
             // Note that connection timeouts will also call this handle with ec
             // set to SimpleWeb::errc::operation_canceled
         };
 
     impl_->server.resource["^/set_value$"]["POST"] =
-        [this](std::shared_ptr<HttpServer::Response> response,
-               std::shared_ptr<HttpServer::Request> request) {
+        [this](const std::shared_ptr<HttpServer::Response>& response,
+               const std::shared_ptr<HttpServer::Request>& request) {
             try {
                 auto json = nlohmann::json::parse(request->content);
-                auto id = json["id"].get<int>();
+                auto id = json["id"].get<size_t>();
 
                 if (id >= impl_->widgets.size()) {
                     auto error = "no widget with ID=" + std::to_string(id) +
@@ -131,7 +135,7 @@ Server::Server(const std::string& root_path, int port,
 
                 try {
                     std::unique_lock<std::mutex> lock(impl_->update_mutex);
-                    impl_->widgets.at(id)->setter(json);
+                    impl_->widgets.at(id)->setter_(json);
 
                 } catch (const std::exception& e) {
                     auto error = "impossible to configure widget with ID=" +
@@ -151,13 +155,13 @@ Server::Server(const std::string& root_path, int port,
         };
 
     impl_->server.resource["^/get_value$"]["POST"] =
-        [this](std::shared_ptr<HttpServer::Response> response,
-               std::shared_ptr<HttpServer::Request> request) {
+        [this](const std::shared_ptr<HttpServer::Response>& response,
+               const std::shared_ptr<HttpServer::Request>& request) {
             auto json = nlohmann::json::parse(request->content);
-            auto id = json["id"].get<int>();
+            auto id = json["id"].get<size_t>();
             try {
                 std::unique_lock<std::mutex> lock(impl_->update_mutex);
-                response->write(impl_->widgets.at(id)->getter());
+                response->write(impl_->widgets.at(id)->getter_());
             } catch (...) {
                 auto error = "no getter with ID=" + std::to_string(id) +
                              " has been registered";
@@ -169,8 +173,9 @@ Server::Server(const std::string& root_path, int port,
         };
 
     impl_->server.resource["^/get_ui$"]["GET"] =
-        [this](std::shared_ptr<HttpServer::Response> response,
-               std::shared_ptr<HttpServer::Request> request) {
+        [this](const std::shared_ptr<HttpServer::Response>& response,
+               [[maybe_unused]] const std::shared_ptr<HttpServer::Request>&
+                   request) {
             using json = nlohmann::json;
 
             json j;
@@ -186,7 +191,7 @@ Server::Server(const std::string& root_path, int port,
             try {
                 response->write(ui_description);
             } catch (...) {
-                auto error = "cannot generate the UI description";
+                const auto* error = "cannot generate the UI description";
                 std::cerr << "wui::Server: " << error << "\n";
                 response->write(
                     SimpleWeb::StatusCode::server_error_internal_server_error,
@@ -214,13 +219,13 @@ void Server::stop() {
 void Server::update() {
     std::unique_lock<std::mutex> lock(impl_->update_mutex);
     for (auto& widget : impl_->widgets) {
-        widget->update();
+        widget->update_();
     }
 }
 
-void Server::addWidget(WidgetPtr widget) {
+void Server::addWidget(const WidgetPtr& widget) {
     impl_->widgets.push_back(widget);
-    widget->id = impl_->widgets.size() - 1;
+    widget->id_ = static_cast<int>(impl_->widgets.size() - 1);
 }
 
 } // namespace wui

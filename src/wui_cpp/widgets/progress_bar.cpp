@@ -4,9 +4,9 @@
 namespace wui {
 
 void ProgressBar::toJson(nlohmann::json& j) const {
-    j["name"] = name;
+    j["name"] = name_;
     j["type"] = "progress_bar";
-    j["container"] = container;
+    j["container"] = container_;
 }
 
 } // namespace wui

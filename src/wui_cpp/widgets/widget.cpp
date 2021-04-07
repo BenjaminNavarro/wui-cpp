@@ -1,17 +1,18 @@
 #include <wui-cpp/widgets/widget.h>
 #include <nlohmann/json.hpp>
+#include <utility>
 
 namespace wui {
 void to_json(nlohmann::json& j, const Widget& widget) {
     widget.toJson(j);
 }
 
-Widget::Widget(std::string name) : name(name) {
-    update = []() {};
+Widget::Widget(std::string name) : name_(std::move(name)) {
+    update_ = []() {};
 }
 
 void Widget::setContainer(const std::string& container) {
-    this->container = container;
+    this->container_ = container;
 }
 
 namespace internal {

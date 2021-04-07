@@ -11,20 +11,20 @@ public:
     template <typename ValueT>
     ProgressBar(const std::string& name, ValueT& value, double scale = 1.)
         : Widget(name) {
-        getter = [this]() {
+        getter_ = [this]() {
             std::stringstream ss;
             auto val = std::any_cast<ValueT>(internal_state_);
             ss << val;
             return ss.str();
         };
 
-        update = [this, &value, scale]() { internal_state_ = value * scale; };
+        update_ = [this, &value, scale]() { internal_state_ = value * scale; };
 
-        update();
+        update_();
     }
 
 protected:
-    virtual void toJson(nlohmann::json& j) const override;
+    void toJson(nlohmann::json& j) const override;
 
     std::any internal_state_;
 };
