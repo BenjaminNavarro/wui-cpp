@@ -19,6 +19,8 @@ PID_Package(
     VERSION         0.5.2
 )
 
+check_PID_Environment(LANGUAGE CXX[std=17])
+
 PID_Dependency(simple-web-server VERSION 3.0)
 PID_Dependency(json FROM VERSION 3.9.1)
 
