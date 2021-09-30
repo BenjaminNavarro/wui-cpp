@@ -236,6 +236,9 @@ define("wuicpp", ["require", "exports", "axios"], function (require, exports, ax
                     else if (widget.type == 'switch') {
                         this.createSwitch(widget);
                     }
+                    else if (widget.type == 'combobox') {
+                        this.createComboBox(widget);
+                    }
                     else {
                         console.log("Unknown widget type:", widget.type);
                     }
@@ -452,6 +455,46 @@ define("wuicpp", ["require", "exports", "axios"], function (require, exports, ax
                     axios_1.default.post(this_obj._server_ip + '/set_value', {
                         id: widget.id,
                         state: event.args.checked
+                    }, {
+                        responseType: 'text'
+                    }).catch(function (error) {
+                        console.log(error);
+                    });
+                });
+            }
+            createComboBox(widget) {
+                let container = this.getUIContainer(widget.container);
+                let combobox_container = document.createElement('div');
+                combobox_container.style.width = '350px';
+                combobox_container.style.height = '60px';
+                combobox_container.style.display = 'flex';
+                combobox_container.setAttribute('widget-name', widget.name);
+                let combobox_label = document.createElement('input');
+                combobox_label.readOnly = true;
+                combobox_label.value = widget.name;
+                combobox_label.id = 'wui-combobox-label-' + widget.id;
+                combobox_label.style.margin = 'auto auto auto 0';
+                combobox_container.appendChild(combobox_label);
+                let combobox = document.createElement('div');
+                combobox.id = 'wui-combobox-' + widget.id;
+                combobox.style.margin = 'auto';
+                combobox_container.appendChild(combobox);
+                container.appendChild(combobox_container);
+                jqwidgets.createInstance('#' + combobox_label.id, 'jqxInput', {
+                    width: '180px',
+                    height: '30px'
+                });
+                let this_obj = this;
+                jqwidgets.createInstance('#' + combobox.id, 'jqxComboBox', {
+                    width: '120px',
+                    height: '35px',
+                    source: widget.options.entries,
+                    selectedIndex: widget.options.default,
+                    theme: 'bootstrap'
+                }).addEventHandler('select', function (event) {
+                    axios_1.default.post(this_obj._server_ip + '/set_value', {
+                        id: widget.id,
+                        index: event.args.index
                     }, {
                         responseType: 'text'
                     }).catch(function (error) {

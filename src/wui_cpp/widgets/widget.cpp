@@ -22,6 +22,9 @@ double readPropertyAsDouble(const property& p, const std::string& key) {
 bool readPropertyAsBool(const property& p, const std::string& key) {
     return p[key].get<bool>();
 }
+int readPropertyAsInt(const property& p, const std::string& key) {
+    return p[key].get<int>();
+}
 } // namespace internal
 
 } // namespace wui

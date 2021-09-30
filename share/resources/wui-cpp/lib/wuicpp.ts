@@ -34,27 +34,27 @@ export module wuicpp {
                     height: '35px',
                     theme: 'bootstrap'
                 }).addEventHandler('click',
-                    function() {
+                    function () {
                         let loading = document.createElement('div');
                         loading.id = 'ui-loader';
                         document.getElementById('wui-controls').appendChild(loading);
                         let loading_ui = jqwidgets.createInstance(
                             '#' + loading.id,
                             'jqxLoader', {
-                                width: '100px',
-                                height: '100px'
-                            }) as jqwidgets.jqxLoader;
+                            width: '100px',
+                            height: '100px'
+                        }) as jqwidgets.jqxLoader;
 
                         loading_ui.open(0, 0);
 
                         this_obj.stopUpdateTimer();
                         axios.get(this_obj._server_ip + '/get_ui', {
                             responseType: 'json'
-                        }).then(function(response) {
+                        }).then(function (response) {
                             this_obj.createUI(response.data);
                             loading_ui.close();
                         }
-                        ).catch(function(error) {
+                        ).catch(function (error) {
                             alert('Got an error:' + error)
                         });
                     }
@@ -67,7 +67,7 @@ export module wuicpp {
                     height: '35px',
                     theme: 'bootstrap'
                 }).addEventHandler('click',
-                    function() {
+                    function () {
                         this_obj.stopUpdateTimer();
                     }
                 );
@@ -89,7 +89,7 @@ export module wuicpp {
                     symbolPosition: 'right'
                 }
             ).addEventHandler('change',
-                function(event) {
+                function (event) {
                     this_obj._update_timer_period_ms = Number(event.args.value);
                     if (this_obj.isUpdateTimerStarted()) {
                         this_obj.stopUpdateTimer();
@@ -267,6 +267,9 @@ export module wuicpp {
                 else if (widget.type == 'switch') {
                     this.createSwitch(widget);
                 }
+                else if (widget.type == 'combobox') {
+                    this.createComboBox(widget);
+                }
                 else {
                     console.log("Unknown widget type:", widget.type);
                 }
@@ -301,9 +304,9 @@ export module wuicpp {
             jqwidgets.createInstance(
                 '#' + slider_label.id,
                 'jqxInput', {
-                    width: '18%',
-                    height: '30%'
-                });
+                width: '18%',
+                height: '30%'
+            });
 
             let this_obj = this;
             let min = Number(widget.options.min);
@@ -311,34 +314,34 @@ export module wuicpp {
             jqwidgets.createInstance(
                 '#' + slider.id,
                 'jqxSlider', {
-                    width: '80%',
-                    height: '100%',
-                    value: Number(widget.options.default),
-                    min: min,
-                    max: max,
-                    showTicks: true,
-                    ticksFrequency: (max - min) / 5,
-                    showMinorTicks: true,
-                    minorTicksFrequency: (max - min) / 10,
-                    step: (max - min) / 10,
-                    showTickLabels: true,
-                    showRange: true,
-                    tooltip: true,
-                    tickLabelFormatFunction: function(value) {
-                        return Math.round(value * 1000000) / 1000000;
-                    },
-                    theme: 'bootstrap'
-                }).addEventHandler('change', function(event) {
-                    var value = event.args.value;
-                    axios.post(this_obj._server_ip + '/set_value', {
-                        id: widget.id,
-                        value: value
-                    }, {
-                            responseType: 'text'
-                        }).catch(function(error) {
-                            console.log(error);
-                        });
+                width: '80%',
+                height: '100%',
+                value: Number(widget.options.default),
+                min: min,
+                max: max,
+                showTicks: true,
+                ticksFrequency: (max - min) / 5,
+                showMinorTicks: true,
+                minorTicksFrequency: (max - min) / 10,
+                step: (max - min) / 10,
+                showTickLabels: true,
+                showRange: true,
+                tooltip: true,
+                tickLabelFormatFunction: function (value) {
+                    return Math.round(value * 1000000) / 1000000;
+                },
+                theme: 'bootstrap'
+            }).addEventHandler('change', function (event) {
+                var value = event.args.value;
+                axios.post(this_obj._server_ip + '/set_value', {
+                    id: widget.id,
+                    value: value
+                }, {
+                    responseType: 'text'
+                }).catch(function (error) {
+                    console.log(error);
                 });
+            });
         }
 
         createRange(widget: any) {
@@ -365,9 +368,9 @@ export module wuicpp {
             jqwidgets.createInstance(
                 '#' + range_label.id,
                 'jqxInput', {
-                    width: '18%',
-                    height: '30%'
-                });
+                width: '18%',
+                height: '30%'
+            });
 
             let this_obj = this;
             let min = Number(widget.options.min);
@@ -376,32 +379,32 @@ export module wuicpp {
             jqwidgets.createInstance(
                 '#' + range.id,
                 'jqxRangeSelector', {
-                    width: '70%',
-                    height: '33%',
-                    // padding: 0,
-                    range: { from: Number(bounds[0]), to: Number(bounds[1]) },
-                    min: min,
-                    max: max,
-                    majorTicksInterval: (max - min) / 10,
-                    minorTicksInterval: (max - min) / 1000,
-                    labelsFormatFunction: function(value) {
-                        return Math.round(value * 1000000) / 1000000;
-                    },
-                    markersFormatFunction: function(value) {
-                        return Math.round(value * 1000000) / 1000000;
-                    },
-                    theme: 'bootstrap'
-                }).addEventHandler('change', function(event) {
-                    axios.post(this_obj._server_ip + '/set_value', {
-                        id: widget.id,
-                        lower_bound: event.args.from,
-                        upper_bound: event.args.to
-                    }, {
-                            responseType: 'text'
-                        }).catch(function(error) {
-                            console.log(error);
-                        });
+                width: '70%',
+                height: '33%',
+                // padding: 0,
+                range: { from: Number(bounds[0]), to: Number(bounds[1]) },
+                min: min,
+                max: max,
+                majorTicksInterval: (max - min) / 10,
+                minorTicksInterval: (max - min) / 1000,
+                labelsFormatFunction: function (value) {
+                    return Math.round(value * 1000000) / 1000000;
+                },
+                markersFormatFunction: function (value) {
+                    return Math.round(value * 1000000) / 1000000;
+                },
+                theme: 'bootstrap'
+            }).addEventHandler('change', function (event) {
+                axios.post(this_obj._server_ip + '/set_value', {
+                    id: widget.id,
+                    lower_bound: event.args.from,
+                    upper_bound: event.args.to
+                }, {
+                    responseType: 'text'
+                }).catch(function (error) {
+                    console.log(error);
                 });
+            });
         }
 
         createProgressBar(widget: any) {
@@ -429,31 +432,31 @@ export module wuicpp {
             jqwidgets.createInstance(
                 '#' + pb_label.id,
                 'jqxInput', {
-                    width: '18%',
-                    height: '30px'
-                });
+                width: '18%',
+                height: '30px'
+            });
 
             let this_obj = this;
             let pb = jqwidgets.createInstance(
                 '#' + progress_bar.id,
                 'jqxProgressBar', {
-                    width: '80%',
-                    height: '40px',
-                    showText: true,
-                    animationDuration: 0,
-                    theme: 'bootstrap'
-                }) as jqwidgets.jqxProgressBar;
+                width: '80%',
+                height: '40px',
+                showText: true,
+                animationDuration: 0,
+                theme: 'bootstrap'
+            }) as jqwidgets.jqxProgressBar;
 
-            this._update_callbacks.push(function() {
+            this._update_callbacks.push(function () {
                 axios.post(this_obj._server_ip + '/get_value', {
                     id: widget.id
                 }, {
-                        responseType: 'text'
-                    })
-                    .then(function(response) {
+                    responseType: 'text'
+                })
+                    .then(function (response) {
                         pb.actualValue(Number(response.data));
                     })
-                    .catch(function(error) {
+                    .catch(function (error) {
                         console.log(error);
                     });
             });
@@ -477,15 +480,15 @@ export module wuicpp {
                     height: '35px',
                     theme: 'bootstrap'
                 }).addEventHandler('click',
-                    function() {
+                    function () {
                         axios.post(this_obj._server_ip + '/set_value', {
                             id: widget.id,
                             state: true
                         }, {
-                                responseType: 'text'
-                            }).catch(function(error) {
-                                console.log(error);
-                            });
+                            responseType: 'text'
+                        }).catch(function (error) {
+                            console.log(error);
+                        });
                     }
                 );
         }
@@ -515,9 +518,9 @@ export module wuicpp {
             jqwidgets.createInstance(
                 '#' + switch_label.id,
                 'jqxInput', {
-                    width: '180px',
-                    height: '30px'
-                });
+                width: '180px',
+                height: '30px'
+            });
 
             let this_obj = this;
             jqwidgets.createInstance(
@@ -529,15 +532,68 @@ export module wuicpp {
                     checked: widget.options.default == "1",
                     theme: 'bootstrap'
                 }).addEventHandler('change',
-                    function(event) {
+                    function (event) {
                         axios.post(this_obj._server_ip + '/set_value', {
                             id: widget.id,
                             state: event.args.checked
                         }, {
-                                responseType: 'text'
-                            }).catch(function(error) {
-                                console.log(error);
-                            });
+                            responseType: 'text'
+                        }).catch(function (error) {
+                            console.log(error);
+                        });
+                    }
+                );
+        }
+
+        createComboBox(widget: any) {
+            let container = this.getUIContainer(widget.container);
+            let combobox_container = document.createElement('div');
+            combobox_container.style.width = '350px';
+            combobox_container.style.height = '60px';
+            combobox_container.style.display = 'flex';
+            combobox_container.setAttribute('widget-name', widget.name);
+
+            let combobox_label = document.createElement('input');
+            combobox_label.readOnly = true;
+            combobox_label.value = widget.name;
+            combobox_label.id = 'wui-combobox-label-' + widget.id;
+            combobox_label.style.margin = 'auto auto auto 0';
+            combobox_container.appendChild(combobox_label);
+
+            let combobox = document.createElement('div');
+            combobox.id = 'wui-combobox-' + widget.id;
+            combobox.style.margin = 'auto';
+            combobox_container.appendChild(combobox);
+
+            container.appendChild(combobox_container);
+
+            jqwidgets.createInstance(
+                '#' + combobox_label.id,
+                'jqxInput', {
+                width: '180px',
+                height: '30px'
+            });
+
+            let this_obj = this;
+            jqwidgets.createInstance(
+                '#' + combobox.id,
+                'jqxComboBox',
+                {
+                    width: '120px',
+                    height: '35px',
+                    source: widget.options.entries,
+                    selectedIndex: widget.options.default,
+                    theme: 'bootstrap'
+                }).addEventHandler('select',
+                    function (event) {
+                        axios.post(this_obj._server_ip + '/set_value', {
+                            id: widget.id,
+                            index: event.args.index
+                        }, {
+                            responseType: 'text'
+                        }).catch(function (error) {
+                            console.log(error);
+                        });
                     }
                 );
         }
@@ -550,18 +606,18 @@ export module wuicpp {
             this.updateGrid(widget.container);
 
             let this_obj = this;
-            this._update_callbacks.push(function() {
+            this._update_callbacks.push(function () {
                 axios.post(this_obj._server_ip + '/get_value', {
                     id: widget.id
                 }, {
-                        responseType: 'text'
-                    })
-                    .then(function(response) {
+                    responseType: 'text'
+                })
+                    .then(function (response) {
                         cell_value.value = widget.options.prefix + response.data + widget.options.suffix;
                     })
-                    .catch(function(error) {
+                    .catch(function (error) {
                         console.log(error);
-                    }).then(function() {
+                    }).then(function () {
                         this_obj.updateGrid(widget.container);
                     });
             });
@@ -588,7 +644,7 @@ export module wuicpp {
                 tab_list.appendChild(tab_element);
             });
 
-            this._container_creators.push(function() {
+            this._container_creators.push(function () {
                 jqwidgets.createInstance(
                     '#' + tabs_container.id,
                     'jqxTabs'

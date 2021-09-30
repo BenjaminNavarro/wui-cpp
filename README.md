@@ -79,6 +79,7 @@ For now, the following widgets are available:
 |  `wui::Range` | A "pair of sliders" to define a min/max interval |  Input |
 |  `wui::Button` | A momentary push button |  Input |
 |  `wui::Switch` | An on/off switch |  Input |
+|  `wui::ComboBox` | A drop down list of values |  Input |
 |  `wui::Tabs` | Add Tabs to better organize your interface |  Container |
 
 Here is the interface created by the `wui-example` demo application:
@@ -201,7 +202,7 @@ Where `<component>` is one of:
  * `wui-cpp-st`
 
 
-# Online Documentaion
+# Online Documentation
 **wui-cpp** documentation is available [online](https://pid.lirmm.net/pid-framework/packages/wui-cpp).
 You can find:
 

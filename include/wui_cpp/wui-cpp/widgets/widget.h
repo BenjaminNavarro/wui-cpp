@@ -42,6 +42,7 @@ using WidgetPtr = std::shared_ptr<Widget>;
 namespace internal {
 double readPropertyAsDouble(const property& p, const std::string& key);
 bool readPropertyAsBool(const property& p, const std::string& key);
+int readPropertyAsInt(const property& p, const std::string& key);
 } // namespace internal
 
 } // namespace wui

@@ -43,6 +43,9 @@ int main(int argc, char* argv[]) {
     double progress = 0.;
     bool reset = false;
     bool stop_progress = false;
+    std::string current_mission;
+    const std::vector<std::string> missions{"PickObject", "DropObject",
+                                            "GoToHome"};
 
     // Add some widgets in the root container
     wui.add<wui::Slider>("Size", size, 10, 20); // Name, reference, min, max
@@ -55,6 +58,9 @@ int main(int argc, char* argv[]) {
                // Here 0 <= progress <= 1
     wui.add<wui::Button>("Reset", reset);
     wui.add<wui::Switch>("Stop", stop_progress);
+    wui.add<wui::ComboBox>(
+        "Mission", current_mission, missions,
+        "GoToHome"); // Name, reference, entries, default entry
     wui.add<wui::Label>("current size", size, "mm"); // Name, reference, suffix
     wui.add<wui::Label>("Point", point);
 
@@ -101,7 +107,8 @@ int main(int argc, char* argv[]) {
         std::cout << "\rp_gain: " << p_gain << "\ti_gain: " << i_gain
                   << "\td_gain: " << d_gain;
         std::cout << "\tlow: " << bounds.first << "\thigh: " << bounds.second
-                  << "         " << std::flush;
+                  << "\tmission: " << current_mission << "         "
+                  << std::flush;
     }
     std::cout << std::endl;
 }
