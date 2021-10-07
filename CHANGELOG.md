@@ -1,4 +1,13 @@
-# [](https://gite.lirmm.fr/pid/gui/wui-cpp/compare/v1.0.0...v) (2021-09-23)
+# [](https://gite.lirmm.fr/pid/gui/wui-cpp/compare/v1.1.0...v) (2021-10-07)
+
+
+
+# [1.1.0](https://gite.lirmm.fr/pid/gui/wui-cpp/compare/v1.0.0...v1.1.0) (2021-09-30)
+
+
+### Features
+
+* **widget:** add combo box ([bef3b1f](https://gite.lirmm.fr/pid/gui/wui-cpp/commits/bef3b1f51a7ca617a5a7ccff6c8e0c60fe03ba68))
 
 
 

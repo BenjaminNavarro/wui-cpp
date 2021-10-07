@@ -17,7 +17,7 @@ PID_Package(
     DESCRIPTION        "WUI-CPP is an easy to use Web-based GUI for your C++ programs"
     README             instructions.md
     CODE_STYLE         pid11
-    VERSION            1.2.0
+    VERSION            1.1.1
 )
 
 check_PID_Environment(TOOL conventional_commits)
@@ -31,10 +31,10 @@ PID_Publishing(
     FRAMEWORK pid
     CATEGORIES programming/gui
     DESCRIPTION WUI-CPP is an easy to use Web-based GUI for your C++ programs
-    PUBLISH_BINARIES 
+    PUBLISH_BINARIES
     PUBLISH_DEVELOPMENT_INFO
-    ALLOWED_PLATFORMS 
-        x86_64_linux_stdc++11__ub18_gcc9__ 
+    ALLOWED_PLATFORMS
+        x86_64_linux_stdc++11__ub18_gcc9__
         x86_64_linux_stdc++11__ub20_gcc9__
         x86_64_linux_stdc++11__arch_gcc__
 )
